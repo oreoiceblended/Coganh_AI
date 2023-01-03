@@ -1,0 +1,49 @@
+- Toạ độ (x,y): Biểu diễn giống ma trận
+|—————————————>y
+|
+|
+|
+|
+↓
+x
+- Các kiểu dữ liệu:
+	+ Điểm (x,y): tuple
+	+ Nước đi (start, end): tuple(tuple, tuple) với start, end là các điểm.
+	+ Bàn cờ: Board (object)
+	+ Bàn cờ: matrix
+- boardHelper[x][y] -> trả về danh sách các điểm (xi, yi) kế (x,y). Có nghĩa là từ (x,y) chỉ cần di chuyển 1 nước để đến (xi,yi).
+- symmetricHelper[x][y] -> trả về danh sách các cặp điểm (x1,y1) và (x2,y2) sao cho (x1,y1) đối xứng với (x2,y2) qua (x,y).
+- get_prev_move(prev:matrix, cur: matrix) -> trả về tuple (start, end) thể hiện bước vừa đi của đối thủ từ điểm start sang điểm end.
+- isTrapChess(board:Board, fromPos, toPos) -> kiểm tra nước vừa đi có phải là nước mở hay không. Nước vừa đi là nước từ fromPos sang toPos
+- getMovableChessList(board:Board, player, trapPos) -> trả về danh sách tất cả các nước (start, end) tiếp theo có thể đi.
+    Giải thích tham số truyền vào:	
+	+ trapPos = None khi nước của đối thủ không phải là nước bẫy
+	+ Nếu nước của đối thủ là nước bẫy (start, end) thì trapPos = start
+- getBoardAfterMove(board:Board, player, move) -> cập nhật lại bàn cờ board sau khi thực hiện nước đi move.
+- move(prev_board, board, player, remain_time_x, remain_time_o) -> miêu tả theo đề bài
+- class Board:
+   Atrribute:
+	+ numO: số lượng quân O.
+	+ numX: số lượng quân X.
+	+ mat: ma trận bàn cờ.
+   Method:
+	+ staticEval(self, player) -> đánh giá điểm của bàn cờ đối với player (số quân cờ của mình - số quân cờ của địch)
+	+ printBoard(self) -> In ra bàn cờ
+- class AI:
+   Attribute:
+	+ PLAYERID: thể hiện lượt chơi của player nào.
+	+ offset: dùng để tính toán thời gian còn lại cho các node ở tầng tiếp theo.
+   Method:
+	+ alpha_beta_search(self, board:Board, player:int, prev_move, timepermove) -> Alpha-beta Minimax (chỉ gọi 1 lần đầu tiên trong hàm move)
+															trả về nước đi tốt nhất trong các nước tiếp theo (Max)
+		Giải thích tham số truyền vào:
+			. prev_move: Nước vừa đi của đối thủ
+			. timepermove: thời gian để tính toán cho node hiện tại.
+	+ min_value(self, board:Board, player, alpha, beta, prev_move, timepermove) -> trả về min_value (tương tự với hàm Opponent)
+		Giải thích tham số truyền vào:
+			. prev_move: Nước vừa đi của đối thủ
+			. timepermove: thời gian để tính toán cho node hiện tại.
+	+ max_value(self, board:Board, player, alpha, beta, prev_move, timepermove) -> trả về max_value (tương tự với hàm Player)
+		Giải thích tham số truyền vào:
+			. prev_move: Nước vừa đi của đối thủ
+			. timepermove: thời gian để tính toán cho node hiện tại.

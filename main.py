@@ -212,6 +212,7 @@ def move(prev_board, board, player, remain_time_x, remain_time_o):
 class AI:
     def __init__(self, player):
         self.PLAYERID = player
+        self.offset = 0.0001
     def alpha_beta_search(self, board:Board, player:int, prev_move, timepermove):
         timestart = time.time()
         alpha = -INF
@@ -227,7 +228,7 @@ class AI:
         if len(movableList) == 1:
             return movableList[0]
         n = len(movableList)
-        nexttimepermove = (timepermove/n) - 0.0001 - (time.time() -timestart)
+        nexttimepermove = (timepermove/n) - self.offset - (time.time() -timestart)
         # change_moveList = []
         # for move in movableList:
         #     start = (4-move[0][0],move[0][1])
@@ -260,7 +261,7 @@ class AI:
         n = len(movableList)
         if (n == 0):
             return value
-        nexttimepermove = (timepermove/n) - 0.0001 - (time.time() -timestart)
+        nexttimepermove = (timepermove/n) - self.offset - (time.time() -timestart)
         for i in range(len(movableList)):
             next_board = Board(copy.deepcopy(board.mat))
             getBoardAfterMove(next_board, player, movableList[i])
@@ -283,7 +284,7 @@ class AI:
         n = len(movableList)
         if (n == 0):
             return value
-        nexttimepermove = (timepermove/n) - 0.0001 - (time.time() -timestart)
+        nexttimepermove = (timepermove/n) - self.offset - (time.time() -timestart)
         for i in range(len(movableList)):
             next_board = Board(copy.deepcopy(board.mat))
             getBoardAfterMove(next_board, player, movableList[i])
