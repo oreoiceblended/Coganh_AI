@@ -1,6 +1,5 @@
 import time
 import copy
-
 import math
 INF = math.inf
 SIZE = 5
@@ -79,9 +78,6 @@ class Board():
                     self.numO += 1
                 elif self.mat[i][j] == -1:
                     self.numX += 1
-    def printBoard(self):
-        for i in range(5):
-            print(self.mat[i])                
 def get_prev_move(prev_board, cur_board):
     start = ()
     end = ()
@@ -206,8 +202,6 @@ def move(prev_board, board, player, remain_time_x, remain_time_o):
     cur_board_obj = Board(board)
     ai = AI(player)
     res = ai.alpha_beta_search(cur_board_obj, player, prev_move, timepermove-(time.time() -timestart))
-    # start = (4-res[0][0],res[0][1])
-    # end = (4-res[1][0],res[1][1])
     return res
 class AI:
     def __init__(self, player):
@@ -228,13 +222,6 @@ class AI:
             return movableList[0]
         n = len(movableList)
         nexttimepermove = (timepermove/n) - 0.0001 - (time.time() -timestart)
-        # change_moveList = []
-        # for move in movableList:
-        #     start = (4-move[0][0],move[0][1])
-        #     end = (4-move[1][0],move[1][1])
-        #     change_moveList.append((start, end))
-        # print("Cac nuoc di hop le:")
-        # print(change_moveList)
         best_move = ()
         for i in range(len(movableList)):
             next_board = Board(copy.deepcopy(board.mat))
@@ -292,51 +279,3 @@ class AI:
                 return value
             beta = max(beta, value)
         return value
-
-    # def timeOut(self):
-    #     if time.time() - self.timeStart >= TIMELIMIT:
-    #         return True
-    #     return False
-
-    # def getTime(self):
-    #     return time.time() - self.timeStart
-prevBoard = [
-    [ 1,  1,  0,  1,  1],
-    [ 1,  0,  0, -1,  1],
-    [-1,  1,  1,  0,  0],
-    [-1, -1, -1,  0,  0],
-    [-1,  0,  0, -1, -1]
-]
-curBoard = [
-    [-1, -1, -1, -1, -1],
-    [-1,  0,  0, -1, -1],
-    [ 0,  1,  0,  0,  0],
-    [ 1,  1,  0,  0,  1],
-    [ 1,  1,  0,  1,  1]
-]
-player = -1
-if __name__ == '__main__':
-    timestart = time.time()
-    res = move(None, curBoard, player, 10, 0)
-    timeend = time.time()
-    print(timeend - timestart)
-    print("Next move:")
-    print(res[0], res[1])
-
-
-    #doi ve output giong de
-    start = (4-res[0][0],res[0][1])
-    end = (4-res[1][0],res[1][1])
-    res1 = (start, end)
-
-    #print next board
-    next_board = Board(curBoard)
-    print("Cur_Board:")
-    next_board.printBoard()
-    getBoardAfterMove(next_board, player, res1)
-    # print("Next_Board:")
-    # next_board.printBoard()
-    # print("1: ", next_board.numO)
-    # print("-1: ", next_board.numX)
-    
-    # print(symmetricHelper[1][1]) 
