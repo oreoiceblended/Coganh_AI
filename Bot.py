@@ -340,9 +340,12 @@ class QLearningBot:
             with open(path, "rb") as f:
                 self.QTable = pickle.load(f)
         else:
-            self.train(500)
-            with open(path, "wb") as f:
-                pickle.dump(self.QTable, f)
+            self.train(30000)
+            self.updateQTable(path)
+
+    def updateQTable(self, path):
+        with open(path, "wb") as f:
+            pickle.dump(self.QTable, f)
 
     def getItem(self, key):
         key[0] = str(key[0])
@@ -378,6 +381,8 @@ class QLearningBot:
         else:
             trapPos = None
         movableList = getMovableChessList(cur_board_obj, self.PLAYERID, trapPos)
+        if len(movableList) == 0:
+            return None
         n = random.random()
         if self.getItem([board]) == {} or n < eps:
             for move in movableList:
@@ -431,7 +436,6 @@ class QLearningBot:
             print("Winner is ", board.getWinner())
             print("So nuoc di: ", countX)
             board.print()
-
         print('------------Random Environment------------')
         for i in range(episode // 2):
             fight_train(RandomBot(1))
@@ -439,13 +443,13 @@ class QLearningBot:
         for i in range(episode // 2 + 1):
             fight_train(RandomBot(1), 1)
             print("Episode {} Complete".format(i))
-        print('------------AlphaBeta Environment------------')
-        for i in range(episode // 2):
-            fight_train(AlphaBetaBot(1))
-            print("Episode {} Complete".format(i))
-        for i in range(episode // 2 + 1):
-            fight_train(AlphaBetaBot(1), 1)
-            print("Episode {} Complete".format(i))
+        # print('------------AlphaBeta Environment------------')
+        # for i in range(episode // 2):
+        #     fight_train(AlphaBetaBot(1))
+        #     print("Episode {} Complete".format(i))
+        # for i in range(episode // 2 + 1):
+        #     fight_train(AlphaBetaBot(1), 1)
+        #     print("Episode {} Complete".format(i))
 
 t = QLearningBot(-1)
 
