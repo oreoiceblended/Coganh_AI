@@ -392,6 +392,8 @@ class QLearningBot:
             candidate = self.getItem([board])
             best = max(candidate.values())
             res = [k for k, v in candidate.items() if v == best]
+            if len(res) == 0:
+                return None
             return res[random.randint(0, len(res)-1)]
 
 
@@ -411,7 +413,7 @@ class QLearningBot:
                 countX += 1
                 act = self.move(prev_board, board.mat, 0, 0, eps)
                 if act == None:
-                    count -= 1
+                    countX -= 1
                     break
                 old_board = prev_board = copy.deepcopy(board.mat)
                 getBoardAfterMove(board, -1, act)
@@ -452,6 +454,7 @@ class QLearningBot:
         #     print("Episode {} Complete".format(i))
 
 t = QLearningBot(-1)
+print(t.QTable)
 
             
 
