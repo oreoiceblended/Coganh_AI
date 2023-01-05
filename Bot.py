@@ -98,6 +98,11 @@ class Board():
                 else:
                     print('-', end=" ")
             print("")
+
+    def getWinner(self):
+        if self.numO >= self.numX:
+            return 1
+        return -1
 def get_prev_move(prev_board, cur_board):
     start = ()
     end = ()
@@ -330,18 +335,20 @@ class QLearningBot:
     def __init__(self, player):
         self.QTable = {}
         self.PLAYERID = player
-        path_to_data = "QTable.pkl"
-        if os.path.exists(path_to_data):
-            self.load(path_to_data)
+        path = "QTable.pkl"
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                self.QTable = pickle.load(f)
         else:
-            self.train()
-            self.save(path_to_data)
+            self.train(500)
+            with open(path, "wb") as f:
+                pickle.dump(self.QTable, f)
 
     def getItem(self, key):
         key[0] = str(key[0])
         if len(key) == 1:
             return self.QTable.setdefault(key[0], {})
-        key[1] = str(key[1])
+        #key[1] = str(key[1])
         if key[0] in self.QTable:
             if key[1] in self.QTable[key[0]]:
                 return self.QTable[key[0]][key[1]]
@@ -353,18 +360,12 @@ class QLearningBot:
 
     def setItem(self, key, values):
         key[0] = str(key[0])
-        key[1] = str(key[1])
+        #key[1] = str(key[1])
         if key[0] in self.QTable:
             self.QTable[key[0]][key[1]] = values
         else:
             self.QTable[key[0]] = {key[1]: values}
-    
-    def save(self, path):
-        with open(path, "wb") as f:
-            pickle.dump(self.__dict__, f, 2)
-    def load(self, path):
-        with open(path, "rb") as f:
-            self.__dict__.update(pickle.load(f))
+
     
     def move(self, prev_board, board, remain_time_x, remain_time_o, eps=-1):
         prev_move = None
@@ -392,47 +393,61 @@ class QLearningBot:
     def train(self, episode=10000, alpha=0.5, gamma=0.9, eps=0.3):
         def fight_train(env_player, train_turn = -1):
             prev_board = None
-            board = Board(init_board)
-            env_turn = train_turn*(-1)
+            board = Board(copy.deepcopy(init_board))
+            countX = 0
+            countO = 0
+            prePoint = board.staticEval(-1)
             if train_turn == 1:
+                countO = 1
                 move = env_player.move(prev_board, board.mat, 0, 0)
                 prev_board = copy.deepcopy(board.mat)
-                getBoardAfterMove(board, -1, move)
+                getBoardAfterMove(board, 1, move)
             while True:
-                act = self.move(prev_board, board.mat, 0, 0)
-                old_board = prev_board = copy.deepcopy(board.mat)
-                print(act)
-                getBoardAfterMove(board, train_turn, act)
-                oldScore = self.getItem([old_board, act])
-                if checkEnd(board):
-                    self.setItem([old_board, act],max(board.staticEval(train_turn), oldScore))
+                countX += 1
+                act = self.move(prev_board, board.mat, 0, 0, eps)
+                if act == None:
+                    count -= 1
                     break
+                old_board = prev_board = copy.deepcopy(board.mat)
+                getBoardAfterMove(board, -1, act)
+                oldScore = self.getItem([old_board, act])
+                if checkEnd(board) or (countX == 50 and countO == 50):
+                    self.setItem([old_board, act],max(board.staticEval(-1), oldScore))
+                    break
+                countO += 1
                 move = env_player.move(prev_board, board.mat, 0, 0)
+                if move == None:
+                    break
                 prev_board = copy.deepcopy(board.mat)
-                getBoardAfterMove(board, env_turn, move)
-                if checkEnd(board):
-                    self.setItem([old_board, act],min(board.staticEval(train_turn), oldScore))
+                getBoardAfterMove(board, 1, move)
+                if checkEnd(board) or (countX == 50 and countO == 50):
+                    self.setItem([old_board, act],min(board.staticEval(-1), oldScore))
                     break
                 else:
-                    reward = board.staticEval(train_turn)
+                    curPoint = board.staticEval(-1)
+                    reward = curPoint - prePoint
+                    prePoint = curPoint
                     self.setItem([old_board, act],oldScore + alpha * (reward + gamma * max(self.getItem([old_board]).values()) - oldScore))
-        
+            print("Winner is ", board.getWinner())
+            print("So nuoc di: ", countX)
+            board.print()
+
         print('------------Random Environment------------')
         for i in range(episode // 2):
             fight_train(RandomBot(1))
             print("Episode {} Complete".format(i))
         for i in range(episode // 2 + 1):
-            fight_train(RandomBot(-1), 1)
+            fight_train(RandomBot(1), 1)
             print("Episode {} Complete".format(i))
         print('------------AlphaBeta Environment------------')
         for i in range(episode // 2):
             fight_train(AlphaBetaBot(1))
             print("Episode {} Complete".format(i))
         for i in range(episode // 2 + 1):
-            fight_train(AlphaBetaBot(-1), 1)
+            fight_train(AlphaBetaBot(1), 1)
             print("Episode {} Complete".format(i))
 
-QLearningBot(-1)
+t = QLearningBot(-1)
 
             
 
