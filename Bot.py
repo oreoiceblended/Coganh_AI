@@ -445,6 +445,8 @@ class QLearningBot:
         for i in range(episode // 2 + 1):
             fight_train(RandomBot(1), 1)
             print("Episode {} Complete".format(i))
+        '''
+        
         # print('------------AlphaBeta Environment------------')
         # for i in range(episode // 2):
         #     fight_train(AlphaBetaBot(1))
@@ -452,6 +454,7 @@ class QLearningBot:
         # for i in range(episode // 2 + 1):
         #     fight_train(AlphaBetaBot(1), 1)
         #     print("Episode {} Complete".format(i))
+        '''
 
 t = QLearningBot(-1)
 #print(t.QTable)
