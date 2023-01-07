@@ -454,9 +454,4 @@ class QLearningBot:
         #     print("Episode {} Complete".format(i))
 
 t = QLearningBot(-1)
-print(t.QTable)
-
-            
-
-
-
+#print(t.QTable)

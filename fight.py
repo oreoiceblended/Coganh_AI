@@ -1,4 +1,4 @@
-from Bot import RandomBot, AlphaBetaBot, Board, getBoardAfterMove, QLearningBot
+from bot import RandomBot, AlphaBetaBot, Board, getBoardAfterMove, QLearningBot
 import time, copy
 init_board = [
     [ 1,  1,  1,  1,  1],
@@ -62,8 +62,3 @@ while True:
         fight(-1)
     elif t == '3':
         break
-    
-
-
-
-    
